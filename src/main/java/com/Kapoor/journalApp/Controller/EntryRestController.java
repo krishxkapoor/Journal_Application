@@ -1,7 +1,9 @@
 package com.Kapoor.journalApp.Controller;
 
 import com.Kapoor.journalApp.entity.JournalEntry;
+import com.Kapoor.journalApp.entity.User;
 import com.Kapoor.journalApp.service.JournalEntryService;
+import com.Kapoor.journalApp.service.UserService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,9 +21,12 @@ public class EntryRestController {
     @Autowired
     private JournalEntryService journalEntryService;
 
-    @GetMapping
-    public ResponseEntity<List<JournalEntry>> getAll() {
-        List<JournalEntry> entries = journalEntryService.getAll();
+    @Autowired
+    private UserService userService;
+    @GetMapping("/{username}")
+    public ResponseEntity<List<JournalEntry>> getAllJournalEntriesOfUser(@PathVariable String username) {
+        User user = userService.findByUsername(username);
+        List<JournalEntry> entries = user.getJournalEntries();
         if(entries!= null && entries.isEmpty()){
             return new ResponseEntity<>(entries, HttpStatus.OK);
         }
